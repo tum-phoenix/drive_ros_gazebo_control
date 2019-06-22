@@ -1,0 +1,7 @@
+<launch>
+    <arg name="odom_topic" default="/odom"/>
+
+    <node name="gazebo_odom_publisher" pkg="drive_ros_gazebo_control" type="gazebo_publish_odom.py" respawn="false" output="screen">
+        <remap from="odom" to="$(arg odom_topic)"/>
+    </node>
+</launch>
