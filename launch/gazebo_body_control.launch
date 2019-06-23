@@ -10,6 +10,7 @@
     <arg name="rear_right_velocity_out" default="/cc2019_car/rear_right_velocity_controller/command"/>
 
     <arg name="command_in" default="/gazebo_drive_command_in"/>
+    <arg name="vel_amplification_factor" default="20"/>
 
     <node name="ros_gazebo_control" pkg="drive_ros_gazebo_control" type="gazebo_ros_body_control_node" respawn="false" output="screen">
         <remap from="front_left_steering_out" to="$(arg front_left_steering_out)"/>
@@ -24,5 +25,6 @@
         <remap from="command_in" to="$(arg command_in)"/>
 
         <param name="manual" type="bool" value="$(arg manual)" />
+        <param name="manual" type="double" value="$(arg vel_amplification_factor)" />
     </node>
 </launch>

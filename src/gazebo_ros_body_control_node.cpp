@@ -15,7 +15,8 @@ public:
     pnh_(pnh),
     steer_(4),
     velocities_(4),
-    manual_driving_(false)
+    manual_driving_(false),
+    vel_amplification_factor_(20.0)
   {
     front_left_steering_pub_ = nh_.advertise<std_msgs::Float64>("front_left_steering_out", 5);
     front_left_velocity_pub_ = nh_.advertise<std_msgs::Float64>("front_left_velocity_out", 5);
@@ -26,6 +27,7 @@ public:
     rear_right_steering_pub_ = nh_.advertise<std_msgs::Float64>("rear_right_steering_out", 5);
     rear_right_velocity_pub_ = nh_.advertise<std_msgs::Float64>("rear_right_velocity_out", 5);
     pnh_.getParam("manual", manual_driving_);
+    pnh_.getParam("vel_amplification_factor", vel_amplification_factor_);
 
     if (manual_driving_)
       command_sub_ = nh_.subscribe("command_in", 1, &GazeboRosBodyControl::manualDrivingCB, this);
@@ -35,7 +37,6 @@ public:
 
   void dynamicsControl()
   {
-    ROS_INFO_STREAM("Velocity: "<<velocities_[FRONT_LEFT]<<", "<<velocities_[FRONT_RIGHT]);
     std_msgs::Float64 cmd_msg;
     cmd_msg.data = steer_[FRONT_LEFT];
     front_left_steering_pub_.publish(cmd_msg);
@@ -56,13 +57,12 @@ public:
   }
 
   void manualDrivingCB(const drive_ros_uavcan::phoenix_msgs__RemoteControlConstPtr &msg) {
-    ROS_INFO_STREAM("Driving command vel "<<msg->velocity);
     steer_[FRONT_LEFT] = msg->steer_front;
     steer_[FRONT_RIGHT] = msg->steer_front;
     steer_[REAR_LEFT] = msg->steer_rear;
     steer_[REAR_RIGHT] = msg->steer_rear;
 
-    std::fill(velocities_.begin(), velocities_.end(), msg->velocity);
+    std::fill(velocities_.begin(), velocities_.end(), msg->velocity*vel_amplification_factor_);
     dynamicsControl();
   }
 
@@ -72,7 +72,7 @@ public:
     steer_[REAR_LEFT] = msg->phi_r;
     steer_[REAR_RIGHT] = msg->phi_r;
 
-    std::fill(velocities_.begin(), velocities_.end(), msg->lin_vel*20);
+    std::fill(velocities_.begin(), velocities_.end(), msg->lin_vel*vel_amplification_factor_);
     dynamicsControl();
   }
 
@@ -91,6 +91,7 @@ private:
   ros::NodeHandle nh_;
   ros::NodeHandle pnh_;
   bool manual_driving_;
+  double vel_amplification_factor_;
 
   std::vector<float> steer_;
   std::vector<float> velocities_;
