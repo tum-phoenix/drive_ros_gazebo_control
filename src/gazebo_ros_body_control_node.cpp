@@ -37,6 +37,9 @@ public:
 
   void dynamicsControl()
   {
+    ROS_DEBUG_STREAM("[GazeboRosBodyControl] Velocity "<<velocities_[FRONT_LEFT]);
+    ROS_DEBUG_STREAM("[GazeboRosBodyControl] Steering front "<<steer_[FRONT_LEFT]);
+    ROS_DEBUG_STREAM("[GazeboRosBodyControl] Steering rear "<<steer_[REAR_LEFT]);
     std_msgs::Float64 cmd_msg;
     cmd_msg.data = steer_[FRONT_LEFT];
     front_left_steering_pub_.publish(cmd_msg);
@@ -67,10 +70,11 @@ public:
   }
 
   void driveCommandCB(const drive_ros_uavcan::phoenix_msgs__NucDriveCommandConstPtr &msg) {
-    steer_[FRONT_LEFT] = msg->phi_f;
-    steer_[FRONT_RIGHT] = msg->phi_f;
-    steer_[REAR_LEFT] = msg->phi_r;
-    steer_[REAR_RIGHT] = msg->phi_r;
+    ROS_DEBUG_STREAM("Got msg front "<<msg->phi_f<<" and rear "<<msg->phi_r);
+    steer_[FRONT_LEFT] = -msg->phi_f;
+    steer_[FRONT_RIGHT] = -msg->phi_f;
+    steer_[REAR_LEFT] = -msg->phi_r;
+    steer_[REAR_RIGHT] = -msg->phi_r;
 
     std::fill(velocities_.begin(), velocities_.end(), msg->lin_vel*vel_amplification_factor_);
     dynamicsControl();
