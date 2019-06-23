@@ -14,7 +14,8 @@ public:
     nh_(nh),
     pnh_(pnh),
     steer_(4),
-    velocities_(4)
+    velocities_(4),
+    manual_driving_(false)
   {
     front_left_steering_pub_ = nh_.advertise<std_msgs::Float64>("front_left_steering_out", 5);
     front_left_velocity_pub_ = nh_.advertise<std_msgs::Float64>("front_left_velocity_out", 5);
@@ -24,7 +25,7 @@ public:
     rear_left_velocity_pub_ = nh_.advertise<std_msgs::Float64>("rear_left_velocity_out", 5);
     rear_right_steering_pub_ = nh_.advertise<std_msgs::Float64>("rear_right_steering_out", 5);
     rear_right_velocity_pub_ = nh_.advertise<std_msgs::Float64>("rear_right_velocity_out", 5);
-    pnh_.param("manual", manual_driving_);
+    pnh_.getParam("manual", manual_driving_);
 
     if (manual_driving_)
       command_sub_ = nh_.subscribe("command_in", 1, &GazeboRosBodyControl::manualDrivingCB, this);
@@ -71,7 +72,7 @@ public:
     steer_[REAR_LEFT] = msg->phi_r;
     steer_[REAR_RIGHT] = msg->phi_r;
 
-    std::fill(velocities_.begin(), velocities_.end(), msg->lin_vel);
+    std::fill(velocities_.begin(), velocities_.end(), msg->lin_vel*20);
     dynamicsControl();
   }
 

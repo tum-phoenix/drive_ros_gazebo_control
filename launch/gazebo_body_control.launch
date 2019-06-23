@@ -1,5 +1,5 @@
 <launch>
-    <arg name="manual" default="false"/>
+    <arg name="manual" default="true"/>
     <arg name="front_left_steering_out" default="/cc2019_car/front_left_steering_controller/command"/>
     <arg name="front_left_velocity_out" default="/cc2019_car/front_left_velocity_controller/command"/>
     <arg name="front_right_steering_out" default="/cc2019_car/front_right_steering_controller/command"/>
@@ -23,6 +23,6 @@
 
         <remap from="command_in" to="$(arg command_in)"/>
 
-        <param name="manual" type="boolean" value="$(arg manual)" />
+        <param name="manual" type="bool" value="$(arg manual)" />
     </node>
 </launch>
