@@ -58,6 +58,8 @@
   <exec_depend>drive_ros_uavcan</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <depend>sensor_msgs</depend>
+  <depend>gazebo_msgs</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

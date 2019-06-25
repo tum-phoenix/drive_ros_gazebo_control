@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(drive_ros_gazebo_control)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   drive_ros_uavcan
   roscpp
   std_msgs
+  gazebo_msgs
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -150,6 +152,16 @@ target_link_libraries(gazebo_ros_body_control_node
     ${catkin_LIBRARIES}
 )
 
+add_executable(gazebo_ros_drive_state_publisher_node src/gazebo_ros_drive_state_publisher_node.cpp)
+
+add_dependencies(gazebo_ros_drive_state_publisher_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(gazebo_ros_drive_state_publisher_node
+    ${catkin_LIBRARIES}
+)
+
+
 #############
 ## Install ##
 #############
@@ -165,7 +177,7 @@ install(PROGRAMS
 )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS gazebo_ros_body_control_node
+install(TARGETS gazebo_ros_body_control_node gazebo_ros_drive_state_publisher_node
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
