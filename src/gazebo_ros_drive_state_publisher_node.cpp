@@ -22,8 +22,14 @@ class GazeboRosDriveStatePublisher {
 public:
   GazeboRosDriveStatePublisher(ros::NodeHandle nh, ros::NodeHandle pnh):
     nh_(nh),
-    pnh_(pnh)
-{
+    pnh_(pnh),
+    front_joint_name_("chassis_to_front_left_steer"),
+    rear_joint_name_("chassis_to_rear_left_steer"),
+    car_model_name_("cc_2019_car")
+  {
+    pnh_.getParam("front_steer_joint_name", front_joint_name_);
+    pnh_.getParam("rear_steer_joint_name", rear_joint_name_);
+    pnh_.getParam("car_model_name", car_model_name_);
     drive_state_pub_ = nh_.advertise<drive_ros_uavcan::phoenix_msgs__DriveState>("drive_state_out", 5);
     joint_sub_ = nh_.subscribe("joint_state_in", 1, &GazeboRosDriveStatePublisher::jointStateCB, this);
     model_state_sub_ = nh_.subscribe("model_state_in", 1, &GazeboRosDriveStatePublisher::modelStateCB, this);
@@ -44,7 +50,7 @@ public:
   }
 
   void modelStateCB(const gazebo_msgs::ModelStatesConstPtr &model_msg) {
-    int car_model_idx = get_idx(model_msg->name, car_joint_name_);
+    int car_model_idx = get_idx(model_msg->name, car_model_name_);
     current_vel_ = std::sqrt(std::pow(model_msg->twist[car_model_idx].linear.x, 2) +
                              std::pow(model_msg->twist[car_model_idx].linear.y, 2));
   }
@@ -59,7 +65,7 @@ private:
   double current_vel_;
   std::string front_joint_name_;
   std::string rear_joint_name_;
-  std::string car_joint_name_;
+  std::string car_model_name_;
 };
 
 int main(int argc, char** argv)
