@@ -25,6 +25,6 @@
         <remap from="command_in" to="$(arg command_in)"/>
 
         <param name="manual" type="bool" value="$(arg manual)" />
-        <param name="manual" type="double" value="$(arg vel_amplification_factor)" />
+        <param name="vel_amplification_factor" type="double" value="$(arg vel_amplification_factor)" />
     </node>
 </launch>

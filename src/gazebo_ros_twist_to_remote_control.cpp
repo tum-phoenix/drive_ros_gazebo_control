@@ -4,7 +4,7 @@
 
 class TwistToDriveState {
 public:
-    TwistToDriveState(ros::NodeHandle &nh): nh_(nh){
+    TwistToDriveState(ros::NodeHandle &nh, ros::NodeHandle &pnh) : nh_(nh), pnh_(pnh){
         twist_sub_ = nh_.subscribe("twist_in", 5, &TwistToDriveState::twistCB, this);
         drive_state_pub_ = nh_.advertise<drive_ros_uavcan::phoenix_msgs__RemoteControl>("remote_control_out", 5);
     }
@@ -33,14 +33,18 @@ private:
     ros::Subscriber twist_sub_;
     ros::Publisher drive_state_pub_;
     ros::NodeHandle nh_;
+    ros::NodeHandle pnh_;
 };
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "gazebo_ros_twist_to_drivestate");
     ros::NodeHandle nh;
+    ros::NodeHandle pnh("~");
+    TwistToDriveState drive_state(nh, pnh);
 
-    ros::spin();
+    while (ros::ok())
+      ros::spin();
 
     return 0;
 }
