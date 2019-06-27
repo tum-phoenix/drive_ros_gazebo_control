@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   gazebo_msgs
   sensor_msgs
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -161,6 +162,15 @@ target_link_libraries(gazebo_ros_drive_state_publisher_node
     ${catkin_LIBRARIES}
 )
 
+add_executable(gazebo_ros_twist_to_remote_control_node src/gazebo_ros_twist_to_remote_control.cpp)
+
+add_dependencies(gazebo_ros_twist_to_remote_control_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(gazebo_ros_twist_to_remote_control_node
+    ${catkin_LIBRARIES}
+)
+
 
 #############
 ## Install ##
@@ -177,7 +187,7 @@ install(PROGRAMS
 )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS gazebo_ros_body_control_node gazebo_ros_drive_state_publisher_node
+install(TARGETS gazebo_ros_body_control_node gazebo_ros_drive_state_publisher_node gazebo_ros_twist_to_remote_control_node
     ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
